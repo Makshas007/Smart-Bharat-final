@@ -126,3 +126,20 @@
 - Services: AI modal shows 3 required sections; caching prevents repeated calls for same service+language.
 - Issue reporting: image upload triggers real vision analysis; submit returns Tracking ID; success animation plays.
 - Tracking: entering Tracking ID shows correct timeline and issue details; graceful errors for invalid IDs.
+
+---
+
+## STATUS LOG (updated by agent)
+
+### Phase 1 — Core POC: COMPLETE ✅
+- Gemini key validated (model: gemini-3-flash-preview via emergentintegrations with user's own key)
+- Text EN ✅, Text HI (Devanagari) ✅, Vision pothole categorization with strict JSON (0.98 confidence) ✅
+- POC script: /app/backend/test_core.py
+
+### Phase 2 — V1 App: COMPLETE ✅
+- Backend: /api/chat/send (SSE streaming + Mongo persistence), /api/chat/history, /api/services, /api/services/simplify (cached per service+language), /api/issues/analyze-image (Gemini vision + upload storage), /api/issues/create (SB-XXXXXX tracking IDs + 3-stage timeline), /api/issues/{id}, /api/issues/recent
+- Frontend: Home (hero, stats, featured services, how-it-works, CTA band), Services (grid + search + AI modal), Report Issue (4-step form + progress + AI photo analysis + animated checkmark success), Track Issue (timeline, ?id= shareable), global chat widget (side panel, EN/HI toggle, typing dots, thinking gradient border, markdown rendering), Navbar + Footer, full EN/HI translations
+- Testing agent iteration 1: backend 10/10 ✅, frontend 9/10; fixed chat FAB/panel overlap with preview badge (moved FAB to bottom-24, panel bottom-14); re-verified chat E2E via Playwright ✅
+- Added react-markdown for polished AI chat responses
+
+### Phase 3 — Polish: NOT STARTED (await user direction)

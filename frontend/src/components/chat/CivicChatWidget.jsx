@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState, useCallback } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { MessageCircle, X, Send, Sparkles } from "lucide-react";
+import ReactMarkdown from "react-markdown";
 import { Button } from "@/components/ui/button";
 import { TypingDots } from "@/components/chat/TypingDots";
 import { useApp } from "@/context/AppContext";
@@ -15,6 +16,22 @@ const getSessionId = () => {
   return sid;
 };
 
+const markdownComponents = {
+  p: (props) => <p className="mb-2 last:mb-0 leading-relaxed" {...props} />,
+  ul: (props) => <ul className="mb-2 ml-4 list-disc space-y-1 last:mb-0" {...props} />,
+  ol: (props) => <ol className="mb-2 ml-4 list-decimal space-y-1 last:mb-0" {...props} />,
+  li: (props) => <li className="leading-relaxed" {...props} />,
+  strong: (props) => <strong className="font-semibold text-slate-900" {...props} />,
+  h1: (props) => <h4 className="mb-1.5 mt-2 text-sm font-bold text-slate-900 first:mt-0" {...props} />,
+  h2: (props) => <h4 className="mb-1.5 mt-2 text-sm font-bold text-slate-900 first:mt-0" {...props} />,
+  h3: (props) => <h4 className="mb-1.5 mt-2 text-sm font-bold text-slate-900 first:mt-0" {...props} />,
+  h4: (props) => <h4 className="mb-1.5 mt-2 text-sm font-bold text-slate-900 first:mt-0" {...props} />,
+  a: (props) => (
+    <a className="font-medium text-[hsl(var(--primary))] underline" target="_blank" rel="noreferrer" {...props} />
+  ),
+  code: (props) => <code className="rounded bg-slate-100 px-1 py-0.5 text-xs" {...props} />,
+};
+
 const Bubble = ({ role, children }) => (
   <motion.div
     variants={{ hidden: { opacity: 0, y: 12 }, show: { opacity: 1, y: 0 } }}
@@ -24,13 +41,17 @@ const Bubble = ({ role, children }) => (
     className={`flex ${role === "user" ? "justify-end" : "justify-start"}`}
   >
     <div
-      className={`max-w-[85%] whitespace-pre-wrap rounded-2xl px-3.5 py-2.5 text-sm leading-relaxed ${
+      className={`max-w-[85%] rounded-2xl px-3.5 py-2.5 text-sm leading-relaxed ${
         role === "user"
-          ? "rounded-br-md bg-slate-900 text-white"
+          ? "whitespace-pre-wrap rounded-br-md bg-slate-900 text-white"
           : "rounded-bl-md border bg-white text-slate-800"
       }`}
     >
-      {children}
+      {role === "assistant" && typeof children === "string" ? (
+        <ReactMarkdown components={markdownComponents}>{children}</ReactMarkdown>
+      ) : (
+        children
+      )}
     </div>
   </motion.div>
 );
@@ -124,7 +145,7 @@ export const CivicChatWidget = () => {
             onClick={() => setChatOpen(true)}
             aria-label="Open Civic AI chat"
             data-testid="chat-widget-open-button"
-            className="shadow-floating fixed bottom-5 right-5 z-50 flex h-14 w-14 items-center justify-center rounded-2xl bg-[hsl(var(--primary))] text-white"
+            className="shadow-floating fixed bottom-24 right-5 z-50 flex h-14 w-14 items-center justify-center rounded-2xl bg-[hsl(var(--primary))] text-white"
           >
             <MessageCircle size={24} />
             <span className="absolute -right-1 -top-1 flex h-4 w-4 items-center justify-center rounded-full bg-[hsl(var(--secondary))]">
@@ -143,7 +164,7 @@ export const CivicChatWidget = () => {
             animate={{ x: 0 }}
             exit={{ x: "110%" }}
             transition={{ type: "spring", stiffness: 300, damping: 32 }}
-            className="fixed inset-y-0 right-0 z-50 w-[94vw] p-2 sm:w-[430px] sm:p-3"
+            className="fixed right-0 top-0 bottom-14 z-50 w-[94vw] p-2 sm:w-[430px] sm:p-3"
             role="dialog"
             aria-label="Civic AI Companion chat"
             data-testid="chat-panel"
